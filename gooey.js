@@ -21,6 +21,33 @@ canvas.height = canvasHeight * dpr
 ctx.scale(dpr, dpr);
 // ctx.fillRect(10,10,50,50);
 
+const feGaussianBlur = document.querySelector('feGaussianBlur');
+const feColorMatrix = document.querySelector('feColorMatrix');
+const controls = new function(){
+    this.blurValue = 40;
+    this.alphaChannel = 100;
+    this.alphaOffset = -32;   
+    this.acc = 1.03;
+}
+
+let gui = new dat.GUI();
+const f1 = gui.addFolder('Gooey Effect');
+f1.open();
+const f2 = gui.addFolder('Particle Property')
+f2.open();
+f1.add(controls, 'blurValue', 0, 100).onChange(value => {
+    feGaussianBlur.setAttribute('stdDeviation', value);
+});
+f1.add(controls, 'alphaChannel',1,300).onChange(value => {
+    feColorMatrix.setAttribute('values', `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${value} ${controls.alphaOffset}`);
+});
+f1.add(controls, 'alphaOffset', -50, 50).onChange(value => {
+    feColorMatrix.setAttribute('values', `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${controls.alphaChannel} ${value}`);
+});
+f2.add(controls, 'acc', 1, 1.5, 0.01).onChange(value => {
+    particles.forEach(particle => particle.acc = value);
+})
+
 class Particle {
     constructor(x,y,radius,vy){
         this.x = x
@@ -30,7 +57,7 @@ class Particle {
         this.acc = 1.035; //acceleration = 양수, friction = 음수
     }
     update(){
-        this.y *= this.acc;
+        this.vy *= this.acc;
         this.y += this.vy;
     }
     draw(){
@@ -48,13 +75,13 @@ const x = 100;
 const y = 100;
 const radius = 50;
 const particle = new Particle(x,y,radius);
-const total = 30;
+const total = 20;
 const randomNumBetween = (min, max) => {
     return Math.random() * (max - min + 1) + min;
 }
 let particles = [];
 
-for(let i = 0; i < total; i ++){
+for(let i = 0; i < total; i++){
     const x = randomNumBetween(0, canvasWidth);
     const y = randomNumBetween(0, canvasHeight);
     const radius = randomNumBetween(50, 100);
@@ -62,7 +89,7 @@ for(let i = 0; i < total; i ++){
     const particle  = new Particle(x, y, radius, vy);
     particles.push(particle);
 }
-// console.log(particles);
+console.log(particles);
 
 let interval = 1000 / 60;
 let now, delta;
@@ -81,13 +108,13 @@ function animate(){
     particles.forEach(particle => {
         particle.update();
         particle.draw();
-
-        if(particle.y - particle.radius > canvas.height){
+        if(particle.y - particle.radius > canvasHeight){
             particle.y = -particle.radius;
             particle.x = randomNumBetween(0, canvasWidth);
             particle.radius = randomNumBetween(50, 100);
             particle.vy = randomNumBetween(1,5);
         }
+        
     })
     then = now - (delta % interval);
     
