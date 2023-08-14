@@ -1,25 +1,31 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-// console.log(ctx);
 const dpr = window.devicePixelRatio;
-const canvasWidth = innerWidth;
-const canvasHeight = innerHeight;
+let canvasWidth 
+let canvasHeight
+let particles
 
-//css size - drawn in html
-canvas.style.width = canvasWidth + 'px';
-canvas.style.height = canvasHeight + 'px';
+function init(){
+    canvasWidth = innerWidth;
+    canvasHeight = innerHeight;
+    canvas.style.width = canvasWidth + 'px';
+    canvas.style.height = canvasHeight + 'px';
+    canvas.width = canvasWidth * dpr
+    canvas.height = canvasHeight * dpr
+    ctx.scale(dpr, dpr);
 
-//canvas origin size
-//some monitors have a device pixel ratio value of 2. multiply by dpr to improve resolution.
-canvas.width = canvasWidth * dpr
-canvas.height = canvasHeight * dpr
+    particles = [];
+    const total = canvasWidth/20;
 
-// if the canvas size is smaller than css size, 
-// the resolution is reduced because the canvas size is increased to css size.
-
-//dpr 사이즈가 2라면 canvas 사이즈 아니고 canvas에 그린 object 사이즈도 2배 해줘야한다.
-ctx.scale(dpr, dpr);
-// ctx.fillRect(10,10,50,50);
+    for(let i = 0; i < total; i++){
+        const x = randomNumBetween(0, canvasWidth);
+        const y = randomNumBetween(0, canvasHeight);
+        const radius = randomNumBetween(20, 50);
+        const vy = randomNumBetween(1,5);
+        const particle  = new Particle(x, y, radius, vy);
+        particles.push(particle);
+    }
+}
 
 const feGaussianBlur = document.querySelector('feGaussianBlur');
 const feColorMatrix = document.querySelector('feColorMatrix');
@@ -75,21 +81,9 @@ const x = 100;
 const y = 100;
 const radius = 50;
 const particle = new Particle(x,y,radius);
-const total = 20;
 const randomNumBetween = (min, max) => {
     return Math.random() * (max - min + 1) + min;
 }
-let particles = [];
-
-for(let i = 0; i < total; i++){
-    const x = randomNumBetween(0, canvasWidth);
-    const y = randomNumBetween(0, canvasHeight);
-    const radius = randomNumBetween(50, 100);
-    const vy = randomNumBetween(1,5);
-    const particle  = new Particle(x, y, radius, vy);
-    particles.push(particle);
-}
-console.log(particles);
 
 let interval = 1000 / 60;
 let now, delta;
@@ -111,7 +105,7 @@ function animate(){
         if(particle.y - particle.radius > canvasHeight){
             particle.y = -particle.radius;
             particle.x = randomNumBetween(0, canvasWidth);
-            particle.radius = randomNumBetween(50, 100);
+            particle.radius = randomNumBetween(20, 50);
             particle.vy = randomNumBetween(1,5);
         }
         
@@ -119,4 +113,11 @@ function animate(){
     then = now - (delta % interval);
     
 }
-animate();
+window.addEventListener('load',()=>{
+    init();
+    animate();
+});
+
+window.addEventListener('resize',()=>{
+    init();
+})
