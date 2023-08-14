@@ -82,7 +82,7 @@ function animate(){
         particle.update();
         particle.draw();
 
-        if(particle.y- particle.radius > canvas.height){
+        if(particle.y - particle.radius > canvas.height){
             particle.y = -particle.radius;
             particle.x = randomNumBetween(0, canvasWidth);
             particle.radius = randomNumBetween(50, 100);
