@@ -19,7 +19,7 @@ function init(){
 }
 
 function createRing(){
-    const PARTICLE_NUM = 20;
+    const PARTICLE_NUM = 800;
     for(let i = 0; i < PARTICLE_NUM; i++){
         particles.push(new Particle());
     }
@@ -37,10 +37,13 @@ function render(){
 
         if(delta < interval ) return
         //write code in here
-        particles.forEach((particle, index)=>{
-            particle.update()
-            particle.draw(ctx);
-        })
+        ctx.clearRect(0,0, canvasWidth, canvasHeight);
+
+        for (let i = particles.length -1 ; i >= 0; i--){
+            particles[i].update()
+            particles[i].draw(ctx)
+            if(particles.opacity < 0 ) particles.splice(i,1);
+        }
 
         then = now = (delta % interval);
 
@@ -57,6 +60,6 @@ window.addEventListener('resize', ()=>{
     init();
 });
 window.addEventListener('click',()=>{
+    console.log('click');
     createRing();
-    console.log(particles);
 })
