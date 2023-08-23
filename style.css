@@ -5,3 +5,30 @@ html, body{
     overflow: hidden;
     background-color: #000;
 }
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+img.ring {
+    position: absolute; z-index: 5;
+    width: 50vh; height: 50vh;
+}
+#countdown {
+    position: absolute;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    color: #fff;
+}
+#countdown > span{
+    position: absolute;
+    font-size: 7rem;
+    transform : scale(5);
+    opacity: 0;
+}
+canvas{
+    position: absolute; z-index: 1;
+}
