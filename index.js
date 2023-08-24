@@ -10,14 +10,23 @@ function init(){
     canvasHeight = innerHeight;
     canvas.style.width = canvasWidth + 'px';
     canvas.style.height = canvasHeight + 'px';
-    canvas.width = canvas.width * dpr;
-    canvas.height = canvas.height * dpr;
+    canvas.width = canvasWidth * dpr;
+    canvas.height = canvasHeight * dpr;
     ctx.scale(dpr, dpr)
 }
 
 function render(){
     let now, delta;
     let then = Date.now();
+
+    const x = innerWidth/2;
+    let y = innerHeight/2;
+    let widthAlpha = 0
+    let heightAlpha = 0;
+    const width = 50;
+    const height = 50;
+    let deg = 0.1;
+
     const frame = () => {
         requestAnimationFrame(frame)
         now = Date.now();
@@ -25,9 +34,22 @@ function render(){
         if (delta < interval) return
         //write code here
 
-        ctx.fillStyle = 'red'
-        ctx.fillRect(200,200,50,50)
+        ctx.clearRect(0,0,canvasWidth,canvasHeight)
 
+        widthAlpha += 0.1
+        heightAlpha += 0.1
+        deg += 0.1;
+        y += 1
+        
+        ctx.translate(x, y + height)
+        ctx.rotate(deg)
+        ctx.translate(-x,-y - height)
+
+        ctx.fillStyle = 'white'
+        ctx.fillRect(x,y,width * Math.cos(widthAlpha),height * Math.sin(heightAlpha))
+        // ctx.fillRect(x,y,width, height)
+
+        ctx.resetTransform();
         then = now - (delta % interval)
     }
     requestAnimationFrame(frame);
