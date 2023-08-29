@@ -18,9 +18,9 @@ function init(){
     canvas.height = canvasHeight * dpr;
     ctx.scale(dpr, dpr);
 }
-function confetti({x,y,count,deg}){
+function confetti({x,y,count,deg,colors}){
     for (let i = 0; i < count; i++){
-        particles.push(new Particle(x,y));
+        particles.push(new Particle(x,y,deg,colors));
     }
 }
 
@@ -47,6 +47,7 @@ function render(){
         for (let i = particles.length - 1 ; i >= 0; i --){
             particles[i].update();
             particles[i].draw(ctx);
+            if(particles[i].opacity < 0) particles.splice(i,1)
         }
 
         
@@ -66,7 +67,8 @@ window.addEventListener('click',(e)=>{
     confetti({
         x : e.clientX,
         y : e.clientY,
-        count : 10,
-        deg : -50 
+        count : 30,
+        deg : -50,
+        colors : ['#ff0000']
     });
 });
